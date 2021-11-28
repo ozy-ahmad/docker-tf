@@ -1,9 +1,9 @@
 
-resource "null_resource" "dockervol" {
-  provisioner "local-exec" {
-    command = "mkdir noderedvol/ || true && sudo chown -R 1000:1000 noderedvol/"
-  }
-}
+# resource "null_resource" "dockervol" {
+#   provisioner "local-exec" {
+#     command = "mkdir noderedvol/ || true && sudo chown -R 1000:1000 noderedvol/"
+#   }
+# }
 
 //this is image hardcode
 # resource "docker_image" "nodered_image" {
@@ -28,7 +28,7 @@ resource "random_string" "random" {
 module "container" {
 source = "./container"
 //explicit dependencies
- depends_on = [null_resource.dockervol]
+# depends_on = [null_resource.dockervol]
   
   //implicit dependencies
   # name  = join("-", ["nodered", terraform.workspace, null_resource.dockervol.id random_string.random[count.index].result])
