@@ -1,13 +1,3 @@
-terraform {
-  required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 2.13.0"
-    }
-  }
-}
-
-provider "docker" {}
 
 resource "null_resource" "dockervol" {
   provisioner "local-exec" {
@@ -15,9 +5,15 @@ resource "null_resource" "dockervol" {
   }
 }
 
-resource "docker_image" "nodered_image" {
-  name = var.image[terraform.workspace]
+//this is image hardcode
+# resource "docker_image" "nodered_image" {
+#   name = var.image[terraform.workspace]
 
+# }
+
+//This is module for image
+module "image" {
+  source = "./image"
 }
 
 resource "random_string" "random" {
@@ -30,7 +26,11 @@ resource "random_string" "random" {
 
 resource "docker_container" "nodered" {
   count = local.container_count
-  image = docker_image.nodered_image.latest
+  //this is how image refence without using  module
+  #image = docker_image.nodered_image.latest
+  
+  //this is how image referenced using module
+  image = module.image.image_out
   name  = join("-", ["nodered", terraform.workspace, random_string.random[count.index].result])
   ports {
     internal = var.int_port
