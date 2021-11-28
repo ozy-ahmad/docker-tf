@@ -7,4 +7,5 @@ terraform {
   }
 }
 
-//provider "docker" {}
+//Empty provider configuration blocks are not required
+#provider "docker" {}
