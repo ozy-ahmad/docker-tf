@@ -8,3 +8,10 @@
 #   value       = module.container[*].container-name
 #   description = "THe name of the container"
 # }
+
+output "application_access" {
+    // for loop is not necessary, use module.container for simplicity
+    #value= [for x in module.container[*]: x]
+    value = module.container
+    description = "The name and socket for each application."
+}
