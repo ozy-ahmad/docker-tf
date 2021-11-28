@@ -25,21 +25,26 @@ resource "random_string" "random" {
 }
 
 
-resource "docker_container" "nodered" {
+module "container" {
+source = "./container"
+//explicit dependencies
+ depends_on = [null_resource.dockervol]
+  
+  //implicit dependencies
+  # name  = join("-", ["nodered", terraform.workspace, null_resource.dockervol.id random_string.random[count.index].result])
   count = local.container_count
+  
+  name_in  = join("-", ["nodered", terraform.workspace, random_string.random[count.index].result])
   //this is how image refence without using  module
   #image = docker_image.nodered_image.latest
   
   //this is how image referenced using module
-  image = module.image.image_out
-  name  = join("-", ["nodered", terraform.workspace, random_string.random[count.index].result])
-  ports {
-    internal = var.int_port
-    external = var.ext_port[terraform.workspace][count.index]
-  }
-  volumes {
-    container_path = "/data"
-    host_path      = "${path.cwd}/noderedvol"
-  }
+  image_in = module.image.image_out
+
+    int_port_in = var.int_port
+    ext_port_in = var.ext_port[terraform.workspace][count.index]
+    container_path_in = "/data"
+    host_path_in      = "${path.cwd}/noderedvol"
+  
 }
 
