@@ -11,25 +11,6 @@
 
 # }
 
-locals {
-  deployment = {
-    nodered = {
-     container_count = length(var.ext_port["nodered"][terraform.workspace])
-      image = var.image["nodered"][terraform.workspace]
-      int = 1880
-      ext = var.ext_port["nodered"][terraform.workspace]
-      container_path = "/data"
-    }
-    influxdb = {
-    container_count = length(var.ext_port["influxdb"][terraform.workspace])
-      image = var.image["influxdb"][terraform.workspace]
-      int = 8086
-      ext = var.ext_port["influxdb"][terraform.workspace]
-      container_path = "/var/lib/influxdb"
-    }
-  }
-}
-
 //This is module for image
 module "image" {
   source   = "./image"
