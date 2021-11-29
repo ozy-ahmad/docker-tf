@@ -21,7 +21,7 @@ module "image" {
 
 module "container" {
   source = "./container"
-  
+
   //explicit dependencies
   # depends_on = [null_resource.dockervol]
 
@@ -31,15 +31,16 @@ module "container" {
   # count = local.container_count
   count_in = each.value.container_count
   for_each = local.deployment
-  name_in = each.key
+  name_in  = each.key
   //this is how image refence without using  module
   #image = docker_image.nodered_image.latest
-  
+
   //this is how image referenced using module
-  image_in = module.image[each.key].image_out
+  image_in          = module.image[each.key].image_out
   int_port_in       = each.value.int
   ext_port_in       = each.value.ext
-  container_path_in = each.value.container_path
-
+  //since we change it using dynamic block this was switched with volumes_in
+  # container_path_in = each.value.container_path
+  volumes_in        = each.value.volumes
 }
 
