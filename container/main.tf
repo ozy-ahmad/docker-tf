@@ -1,13 +1,13 @@
 resource "random_string" "random" {
-  count = var.count_in
+  count   = var.count_in
   length  = 4
   special = false
   # count   = local.container_count
-  upper   = false
+  upper = false
 }
 
 resource "docker_container" "app_container" {
-  name = join("-", [var.name_in, terraform.workspace, random_string.random[count.index].result])
+  name  = join("-", [var.name_in, terraform.workspace, random_string.random[count.index].result])
   count = var.count_in
   image = var.image_in
   ports {
@@ -15,26 +15,26 @@ resource "docker_container" "app_container" {
     external = var.ext_port_in[count.index]
   }
   dynamic "volumes" {
-  for_each = var.volumes_in
-   content {
-     container_path = volumes.value["container_path_each"]
-    # host_path      = var.host_path_in
-    volume_name = module.volume[count.index].volume_output[volumes.key]
-   }
-    
+    for_each = var.volumes_in
+    content {
+      container_path = volumes.value["container_path_each"]
+      # host_path      = var.host_path_in
+      volume_name = module.volume[count.index].volume_output[volumes.key]
+    }
+
   }
   provisioner "local-exec" {
-    command = "echo ${self.name}: ${self.ip_address}:${join("", [for x in self.ports[*]["external"]:x])} >> containers.txt"
+    command = "echo ${self.name}: ${self.ip_address}:${join("", [for x in self.ports[*]["external"] : x])} >> containers.txt"
   }
   provisioner "local-exec" {
-    when = destroy
-    command = "rm -f containers.txt" 
+    when    = destroy
+    command = "rm -f containers.txt"
   }
 }
 
 module "volume" {
-  source = "./volume"
-  count = var.count_in
+  source       = "./volume"
+  count        = var.count_in
   volume_count = length(var.volumes_in)
-  volume_name = "${var.name_in}-${terraform.workspace}-${random_string.random[count.index].result}-volume"
+  volume_name  = "${var.name_in}-${terraform.workspace}-${random_string.random[count.index].result}-volume"
 }

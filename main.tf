@@ -36,11 +36,11 @@ module "container" {
   #image = docker_image.nodered_image.latest
 
   //this is how image referenced using module
-  image_in          = module.image[each.key].image_out
-  int_port_in       = each.value.int
-  ext_port_in       = each.value.ext
+  image_in    = module.image[each.key].image_out
+  int_port_in = each.value.int
+  ext_port_in = each.value.ext
   //since we change it using dynamic block this was switched with volumes_in
   # container_path_in = each.value.container_path
-  volumes_in        = each.value.volumes
+  volumes_in = each.value.volumes
 }
 
